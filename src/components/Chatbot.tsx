@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageSquare, X, Send, User, Bot, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, User, Bot, Sparkles, Gamepad2 } from 'lucide-react';
+import DinoGame from './DinoGame';
 
 interface Message {
   id: string;
   text: string;
   sender: 'user' | 'bot';
   timestamp: Date;
-  type?: 'text' | 'skills' | 'projects' | 'contact';
+  type?: 'text' | 'skills' | 'projects' | 'contact' | 'game';
 }
 
 const INITIAL_BOT_MESSAGE = "Hi! I'm Aadesh's assistant. I can show you his portfolio highlights, skills, or even help you get in touch. What's on your mind?";
@@ -15,6 +16,7 @@ const INITIAL_BOT_MESSAGE = "Hi! I'm Aadesh's assistant. I can show you his port
 const TOPICS = [
   { id: 'skills', label: 'View Skills', icon: '🚀' },
   { id: 'projects', label: 'Recent Work', icon: '💼' },
+  { id: 'game', label: 'Play Game', icon: '🎮' },
   { id: 'contact', label: 'Get in Touch', icon: '✉️' },
   { id: 'about', label: 'Biography', icon: '👤' }
 ];
@@ -24,6 +26,9 @@ const AUTO_RESPONSES: Record<string, { text: string; type?: Message['type'] }> =
   "projects": { text: "Aadesh has some really cool projects! From military robots to premium vector art. Check these out:", type: 'projects' },
   "skills": { text: "He has a powerful multidisciplinary skill set combining electronics and digital design:", type: 'skills' },
   "contact": { text: "You can reach Aadesh directly via email or socials. He's always open for collaboration!", type: 'contact' },
+  "game": { text: "Bored? Try to beat Aadesh's high score in this little retro dash game!", type: 'game' },
+  "play": { text: "Let's roll! Try to jump over the obstacles in 'Aadesh Dash'.", type: 'game' },
+  "dino": { text: "Classic dino-style fun! Tap to jump.", type: 'game' },
   "about": { text: "Based in Kerala, India, Aadesh weaves technology and art together. He holds a Master's in Applied Electronics.", type: 'text' },
   "hi": { text: "Hey! Glad you're here. Want to see Aadesh's work or ask something specific?", type: 'text' },
   "hello": { text: "Hey! Glad you're here. Want to see Aadesh's work or ask something specific?", type: 'text' },
@@ -124,6 +129,8 @@ export default function Chatbot() {
              </a>
           </div>
         );
+      case 'game':
+        return <DinoGame />;
       default:
         return null;
     }
