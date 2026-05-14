@@ -50,7 +50,7 @@ export default function Preloader() {
 
           <div className="relative z-10 flex flex-col items-center">
             {/* Logo Animation */}
-            <div className="flex items-center mb-12">
+            <div className="flex items-center mb-8 md:mb-12">
               <div className="flex overflow-hidden">
                 {letters.map((letter, i) => (
                   <motion.span
@@ -62,7 +62,7 @@ export default function Preloader() {
                       delay: i * 0.08, 
                       ease: [0.33, 1, 0.68, 1] 
                     }}
-                    className="text-6xl md:text-8xl font-display font-black text-white uppercase tracking-tighter"
+                    className="text-4xl md:text-8xl font-display font-black text-white uppercase tracking-tighter"
                   >
                     {letter}
                   </motion.span>
@@ -77,13 +77,13 @@ export default function Preloader() {
                   borderRadius: ["20%", "50%", "20%"]
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="w-5 h-5 md:w-8 md:h-8 bg-[#F27D26] ml-3 mt-3 shadow-[0_0_30px_rgba(242,125,38,0.5)]"
+                className="w-4 h-4 md:w-8 md:h-8 bg-[#F27D26] ml-2 md:ml-3 mt-2 md:mt-3 shadow-[0_0_30px_rgba(242,125,38,0.5)]"
               />
             </div>
 
             {/* Progress Container */}
             <div className="flex flex-col gap-3 items-center">
-              <div className="w-56 md:w-72 h-[3px] bg-white/5 relative overflow-hidden rounded-full">
+              <div className="w-40 md:w-72 h-[3px] bg-white/5 relative overflow-hidden rounded-full">
                 <motion.div 
                   className="absolute top-0 left-0 h-full bg-brand"
                   initial={{ width: 0 }}
@@ -105,7 +105,7 @@ export default function Preloader() {
               scale: [1, 1.05, 1]
             }}
             transition={{ duration: 3, repeat: Infinity }}
-            className="absolute bottom-20 text-[10px] font-black uppercase tracking-[1em] text-white/50"
+            className="absolute bottom-12 md:bottom-20 text-[10px] font-black uppercase tracking-[0.6em] md:tracking-[1em] text-white/50"
           >
             Digital Craftsman
           </motion.div>
