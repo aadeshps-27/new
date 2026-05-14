@@ -18,21 +18,23 @@ export default function DinoGame() {
     animationId: 0
   });
 
-  const GRAVITY = 0.6;
-  const JUMP_FORCE = -12;
+  const GRAVITY = 0.7;
+  const JUMP_FORCE = -13;
   const GROUND_Y = 130;
   const DINO_X = 50;
   const DINO_SIZE = 30;
 
   const spawnObstacle = () => {
-    const minGap = 200;
-    const lastObstacle = gameRef.current.obstacles[gameRef.current.obstacles.length - 1];
+    const game = gameRef.current;
+    // Medium gap: Slightly wider than hard to allow more reaction time
+    const minGap = 170 + Math.random() * 60;
+    const lastObstacle = game.obstacles[game.obstacles.length - 1];
     
-    if (!lastObstacle || (150 * 5 - lastObstacle.x) > minGap) {
-         gameRef.current.obstacles.push({
+    if (!lastObstacle || (400 - lastObstacle.x) > minGap) {
+         game.obstacles.push({
             x: 400,
-            width: 20 + Math.random() * 20,
-            height: 30 + Math.random() * 20
+            width: 20 + Math.random() * (score > 800 ? 35 : 20),
+            height: 30 + Math.random() * (score > 1200 ? 45 : 30)
         });
     }
   };
@@ -60,35 +62,39 @@ export default function DinoGame() {
     // Remove off-screen obstacles
     game.obstacles = game.obstacles.filter(obs => obs.x + obs.width > 0);
 
-    // Spawn Obstacles
-    if (game.frame % 60 === 0) {
+    // Spawn Obstacles - more frequent as score increases
+    const spawnRate = score > 1500 ? 30 : score > 800 ? 45 : 60;
+    if (game.frame % spawnRate === 0) {
       spawnObstacle();
     }
 
     // Collision Detection
     for (const obs of game.obstacles) {
-      if (
-        DINO_X < obs.x + obs.width &&
-        DINO_X + DINO_SIZE > obs.x &&
-        game.dinoY < GROUND_Y && // Simple check for landing on top but actually we want hit
-        game.dinoY + DINO_SIZE > GROUND_Y - obs.height + 30 // adjust for dino base
-      ) {
-        // More precise hit box
-        const dinoLeft = DINO_X + 5;
-        const dinoRight = DINO_X + DINO_SIZE - 5;
-        const dinoBottom = game.dinoY + DINO_SIZE;
-        const obsTop = GROUND_Y + DINO_SIZE - obs.height;
+      // More precise hit box
+      const dinoLeft = DINO_X + 5;
+      const dinoRight = DINO_X + DINO_SIZE - 5;
+      const dinoTop = game.dinoY + 5;
+      const dinoBottom = game.dinoY + DINO_SIZE - 2;
+      
+      const obsLeft = obs.x;
+      const obsRight = obs.x + obs.width;
+      const obsTop = GROUND_Y + DINO_SIZE - obs.height;
+      const obsBottom = GROUND_Y + DINO_SIZE;
 
-        if (dinoRight > obs.x && dinoLeft < obs.x + obs.width && dinoBottom > obsTop) {
-            setGameState('gameOver');
-            return;
-        }
+      if (
+        dinoRight > obsLeft && 
+        dinoLeft < obsRight && 
+        dinoBottom > obsTop &&
+        dinoTop < obsBottom
+      ) {
+        setGameState('gameOver');
+        return;
       }
     }
 
     game.frame++;
-    game.speed += 0.001;
-    setScore(Math.floor(game.frame / 5));
+    game.speed += 0.0015; // Medium acceleration
+    setScore(Math.floor(game.frame / 4));
     
     game.animationId = requestAnimationFrame(update);
   };
@@ -101,8 +107,10 @@ export default function DinoGame() {
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    const isDark = document.documentElement.classList.contains('dark');
+
     // Draw Ground
-    ctx.strokeStyle = '#e5e7eb';
+    ctx.strokeStyle = isDark ? '#3f3f46' : '#e5e7eb';
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.moveTo(0, GROUND_Y + DINO_SIZE);
@@ -120,7 +128,7 @@ export default function DinoGame() {
     ctx.fillRect(DINO_X + 20, gameRef.current.dinoY + 5, 4, 4);
 
     // Draw Obstacles
-    ctx.fillStyle = '#18181b';
+    ctx.fillStyle = isDark ? '#f4f4f5' : '#18181b';
     gameRef.current.obstacles.forEach(obs => {
       ctx.beginPath();
       ctx.roundRect(obs.x, GROUND_Y + DINO_SIZE - obs.height, obs.width, obs.height, 4);
@@ -163,7 +171,7 @@ export default function DinoGame() {
       dinoVelocity: 0,
       obstacles: [],
       frame: 0,
-      speed: 5,
+      speed: 5.5, // Medium starting speed
       isJumping: false,
       animationId: 0
     };
@@ -174,6 +182,21 @@ export default function DinoGame() {
   useEffect(() => {
     if (score > highScore) setHighScore(score);
   }, [score]);
+
+  // Difficulty phase color
+  const getPhaseColor = () => {
+    if (score > 2000) return 'text-red-500';
+    if (score > 1000) return 'text-orange-500';
+    if (score > 500) return 'text-yellow-500';
+    return 'text-brand';
+  };
+
+  const getPhaseLabel = () => {
+    if (score > 2000) return 'God Mode';
+    if (score > 1000) return 'Extreme';
+    if (score > 500) return 'Pro';
+    return 'Rookie';
+  };
 
   return (
     <div 
@@ -186,7 +209,10 @@ export default function DinoGame() {
             <Trophy size={14} className="text-brand" />
             <span className="text-[10px] font-black uppercase tracking-widest opacity-50">HI {highScore}</span>
          </div>
-         <span className="text-[10px] font-black uppercase tracking-widest text-brand">{score}</span>
+         <div className="flex flex-col items-end">
+           <span className={`text-[10px] font-black uppercase tracking-widest transition-colors ${getPhaseColor()}`}>{score}</span>
+           <span className="text-[7px] font-black uppercase tracking-[0.2em] opacity-30">{getPhaseLabel()}</span>
+         </div>
       </div>
 
       <canvas 
