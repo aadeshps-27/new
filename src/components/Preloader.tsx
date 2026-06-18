@@ -6,110 +6,95 @@ export default function Preloader() {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
+    // Smoother and more organic progress timeline
     const timer = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(timer);
-          setTimeout(() => setIsVisible(false), 500);
+          setTimeout(() => setIsVisible(false), 600);
           return 100;
         }
-        return prev + 1;
+        // Organic, modern incremental speed steps
+        const diff = 100 - prev;
+        const speedMultiplier = diff > 40 ? 4 : diff > 15 ? 2 : 1;
+        const incr = Math.floor(Math.random() * speedMultiplier) + 1;
+        return Math.min(prev + incr, 100);
       });
-    }, 20);
+    }, 25);
 
     return () => clearInterval(timer);
   }, []);
 
-  const letters = "aadesh".split("");
-
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.div
-          initial={{ opacity: 1 }}
-          exit={{ 
-            y: "-100%",
-            transition: { duration: 1.2, ease: [0.76, 0, 0.24, 1] }
-          }}
-          className="fixed inset-0 z-[9999] bg-zinc-950 flex flex-col items-center justify-center overflow-hidden"
-        >
-          {/* Animated Matrix-like Background */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="grid grid-cols-12 h-full w-full">
-              {[...Array(12)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ height: 0 }}
-                  animate={{ height: "100%" }}
-                  transition={{ duration: 2, delay: i * 0.1, repeat: Infinity, repeatType: "reverse" }}
-                  className="w-[1px] bg-white/10 mx-auto"
-                />
-              ))}
-            </div>
-          </div>
-
-          <div className="relative z-10 flex flex-col items-center">
-            {/* Logo Animation */}
-            <div className="flex items-center mb-8 md:mb-12">
-              <div className="flex overflow-hidden">
-                {letters.map((letter, i) => (
-                  <motion.span
-                    key={i}
-                    initial={{ y: 150 }}
-                    animate={{ y: 0 }}
-                    transition={{ 
-                      duration: 0.8, 
-                      delay: i * 0.08, 
-                      ease: [0.33, 1, 0.68, 1] 
-                    }}
-                    className="text-4xl md:text-8xl font-display font-black text-white uppercase tracking-tighter"
-                  >
-                    {letter}
-                  </motion.span>
-                ))}
-              </div>
-              
-              <motion.div
-                initial={{ scale: 0, rotate: -45 }}
-                animate={{ 
-                  scale: [0, 1.2, 1],
-                  rotate: [0, 360, 720],
-                  borderRadius: ["20%", "50%", "20%"]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="w-4 h-4 md:w-8 md:h-8 bg-[#F27D26] ml-2 md:ml-3 mt-2 md:mt-3 shadow-[0_0_30px_rgba(242,125,38,0.5)]"
-              />
-            </div>
-
-            {/* Progress Container */}
-            <div className="flex flex-col gap-3 items-center">
-              <div className="w-40 md:w-72 h-[3px] bg-white/5 relative overflow-hidden rounded-full">
-                <motion.div 
-                  className="absolute top-0 left-0 h-full bg-brand"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress}%` }}
-                  transition={{ ease: "linear" }}
-                />
-              </div>
-              
-              <div className="flex justify-between w-full px-1">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/50">Loading System</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand">{progress}%</span>
-              </div>
-            </div>
-          </div>
-
+        <div className="fixed inset-0 z-[9999] overflow-hidden select-none touch-none bg-zinc-950">
+          {/* Minimal Background Panel */}
           <motion.div
-            animate={{ 
-              opacity: [0.1, 0.3, 0.1],
-              scale: [1, 1.05, 1]
+            initial={{ opacity: 1 }}
+            exit={{ 
+              opacity: 0,
+              y: -20,
+              transition: { duration: 0.6, ease: [0.215, 0.61, 0.355, 1] }
             }}
-            transition={{ duration: 3, repeat: Infinity }}
-            className="absolute bottom-12 md:bottom-20 text-[10px] font-black uppercase tracking-[0.6em] md:tracking-[1em] text-white/50"
+            className="absolute inset-0 flex flex-col items-center justify-center p-6 text-center"
           >
-            Digital Craftsman
+            {/* Ambient aesthetic glow */}
+            <div className="absolute inset-x-0 top-1/4 bottom-1/4 bg-[radial-gradient(circle_at_center,rgba(242,125,38,0.04)_0%,transparent_60%)] pointer-events-none" />
+
+            <div className="relative z-10 flex flex-col items-center">
+              {/* Premium Navbar Logo integrated on Preloader */}
+              <motion.div
+                initial={{ opacity: 0, y: 12, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                className="flex items-center mb-4 select-none"
+              >
+                <span className="font-display font-black text-4xl sm:text-5xl uppercase tracking-tighter text-white">
+                  aadesh
+                </span>
+                <div className="relative ml-1.5 mt-1.5">
+                  <motion.div 
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      rotate: [0, 90, 0]
+                    }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                    className="w-3.5 h-3.5 rounded-sm bg-[#F27D26] shadow-[0_0_15px_rgba(242,125,38,0.6)]" 
+                  />
+                </div>
+              </motion.div>
+
+              {/* Minimal Hairline Progress Line */}
+              <div className="w-24 sm:w-32 h-[1px] bg-zinc-900 overflow-hidden relative mt-4 rounded-full">
+                <motion.div 
+                  className="absolute inset-y-0 left-0 bg-[#F27D26]"
+                  style={{ width: `${progress}%` }}
+                  transition={{ ease: "easeOut" }}
+                />
+              </div>
+
+              {/* Minimalist Micro counter indicator */}
+              <motion.span 
+                className="text-[8px] font-mono tracking-[0.25em] text-zinc-500 mt-2 block uppercase"
+                animate={{ opacity: [0.5, 0.9, 0.5] }}
+                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+              >
+                {progress < 100 ? `Loading · ${progress}%` : "Loaded"}
+              </motion.span>
+            </div>
           </motion.div>
-        </motion.div>
+
+          {/* Sweeping Parallax Parachute Curtain (keeps original premium exit feel transition) */}
+          <motion.div
+            initial={{ y: "100%" }}
+            exit={{ 
+              y: "-100%",
+              transition: { duration: 0.85, delay: 0.05, ease: [0.76, 0, 0.24, 1] }
+            }}
+            className="absolute inset-0 z-50 bg-[#F27D26]"
+          />
+        </div>
       )}
     </AnimatePresence>
   );
