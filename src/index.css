@@ -26,9 +26,12 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scroll-snap-type: y proximity;
   }
   section {
     scroll-margin-top: 80px;
+    scroll-snap-align: start;
+    scroll-snap-stop: normal;
   }
   body {
     @apply antialiased transition-colors duration-500 bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50;
