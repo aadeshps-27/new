@@ -10,9 +10,9 @@ export default function ScreenshotProtection() {
       e.preventDefault();
     };
 
-    // 2. Block Keyboard Shortcuts (PrintScreen, Save, Print, Inspect)
+    // 2. Block Keyboard Shortcuts (PrintScreen, Snip Tool, Copy, Cut, Select All)
     const handleKeyDown = (e: KeyboardEvent) => {
-      // PrintScreen key (sometimes reported as 'PrintScreen' or 'Snapshot')
+      // PrintScreen key
       if (e.key === 'PrintScreen' || e.key === 'Snapshot') {
         e.preventDefault();
         setIsBlurred(true);
@@ -31,6 +31,21 @@ export default function ScreenshotProtection() {
         e.preventDefault();
         setIsBlurred(true);
         setTimeout(() => setIsBlurred(false), 2000);
+      }
+
+      // Block Copy Shortcut (Cmd + C or Ctrl + C)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'c') {
+        e.preventDefault();
+      }
+
+      // Block Cut Shortcut (Cmd + X or Ctrl + X)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'x') {
+        e.preventDefault();
+      }
+
+      // Block Select All (Cmd + A or Ctrl + A)
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
       }
 
       // Save page (Cmd+S or Ctrl+S)
@@ -62,8 +77,12 @@ export default function ScreenshotProtection() {
       e.preventDefault();
     };
 
-    // 4. Handle Window Blur / Defocus & Tab Visibility Changes
-    // Blurs the screen when the page is defocused (e.g. taking snip screenshot)
+    // 4. Block Clipboard Event Hooks Directly (Copy & Cut listener overrides)
+    const handleClipboardEvent = (e: ClipboardEvent) => {
+      e.preventDefault();
+    };
+
+    // 5. Handle Window Blur / Defocus & Tab Visibility Changes
     const handleBlur = () => {
       setIsBlurred(true);
     };
@@ -89,6 +108,8 @@ export default function ScreenshotProtection() {
     window.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('dragstart', handleDragStart);
+    window.addEventListener('copy', handleClipboardEvent);
+    window.addEventListener('cut', handleClipboardEvent);
     window.addEventListener('blur', handleBlur);
     window.addEventListener('focus', handleFocus);
     window.addEventListener('visibilitychange', handleVisibilityChange);
@@ -103,6 +124,8 @@ export default function ScreenshotProtection() {
       window.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('dragstart', handleDragStart);
+      window.removeEventListener('copy', handleClipboardEvent);
+      window.removeEventListener('cut', handleClipboardEvent);
       window.removeEventListener('blur', handleBlur);
       window.removeEventListener('focus', handleFocus);
       window.removeEventListener('visibilitychange', handleVisibilityChange);
@@ -112,7 +135,7 @@ export default function ScreenshotProtection() {
 
   return (
     <>
-      {/* 1. Global Print Protection & User Select CSS */}
+      {/* 1. Global Print Protection & Force Selection Blocking CSS */}
       <style>{`
         @media print {
           body, html, main, #root {
@@ -123,13 +146,13 @@ export default function ScreenshotProtection() {
             overflow: hidden !important;
           }
         }
-        body {
-          -webkit-touch-callout: none;
-          -webkit-user-select: none;
-          -khtml-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
+        *, *::before, *::after {
+          -webkit-touch-callout: none !important;
+          -webkit-user-select: none !important;
+          -khtml-user-select: none !important;
+          -moz-user-select: none !important;
+          -ms-user-select: none !important;
+          user-select: none !important;
         }
       `}</style>
 
