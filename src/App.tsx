@@ -10,8 +10,10 @@ import MilitaryRobotSection from './components/MilitaryRobotSection';
 import GeoLocationSection from './components/GeoLocationSection';
 import CreativeProfileSection from './components/CreativeProfileSection';
 import { motion, useScroll, useSpring } from 'motion/react';
+import { useScrollDepth } from './hooks/useScrollDepth';
 
 export default function App() {
+  const scrollDepth = useScrollDepth();
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -35,8 +37,16 @@ export default function App() {
       <Chatbot />
       
       <nav className="fixed top-0 left-0 w-full z-40 px-6 py-6 flex justify-between items-center pointer-events-none">
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto flex items-center gap-3 bg-white/60 dark:bg-zinc-900/60 backdrop-blur-xl px-4 py-2 rounded-full border border-white/20 dark:border-zinc-805/20 shadow-lg">
            <Logo />
+           <div className="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-800" />
+           <div 
+             className="flex items-center gap-1.5 font-mono text-[9px] font-black text-zinc-500 dark:text-zinc-400 tracking-wider hover:text-brand transition-colors cursor-help"
+             title="Overall scroll progress through the digital canvas"
+           >
+             <span className="opacity-60 hidden sm:inline">SCROLL</span>
+             <span className="text-brand font-black w-8 text-right">{scrollDepth}%</span>
+           </div>
         </div>
         <div className="hidden md:flex gap-4 pointer-events-auto bg-white/50 dark:bg-zinc-900/50 backdrop-blur-xl px-2 py-2 rounded-full border border-white/20 dark:border-zinc-800/20 shadow-lg">
            {['About', 'Experience', 'Projects', 'Contact'].map(item => (
