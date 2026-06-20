@@ -5,7 +5,6 @@ import Logo from './components/Logo';
 import Chatbot from './components/Chatbot';
 import Preloader from './components/Preloader';
 import CustomCursor from './components/CustomCursor';
-import ScreenshotProtection from './components/ScreenshotProtection';
 import { About, Experience, Projects, Contact } from './components/Sections';
 import MilitaryRobotSection from './components/MilitaryRobotSection';
 import GeoLocationSection from './components/GeoLocationSection';
@@ -26,7 +25,6 @@ export default function App() {
 
   return (
     <main className="relative min-h-screen selection:bg-brand selection:text-white">
-      <ScreenshotProtection />
       <Preloader />
       <CustomCursor />
       {/* Progress Bar */}
